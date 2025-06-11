@@ -13,7 +13,7 @@
               "chickenfarmmardrid": {
                 "username": "$CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid",
                 "password": "$CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid",
-                "address": "chickenfarmmardrid.azurecr.io"
+                "address": "$CONTAINER_REGISTRY_ADDRESS"
               }
             }
           }
