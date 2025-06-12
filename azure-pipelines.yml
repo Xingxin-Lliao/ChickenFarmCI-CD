@@ -19,7 +19,7 @@ stages:
       displayName: 'Build Docker Image'
   
     - script: |
-        docker login -u $(CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid) -p $(CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid) $(CONTAINER_REGISTRY_ADDRESS)
+        docker login -u $(CONTAINER_REGISTRY_USERNAME) -p $(CONTAINER_REGISTRY_PASSWORD) $(CONTAINER_REGISTRY_ADDRESS)
         docker tag $(MODULE_NAME) $(CONTAINER_REGISTRY_ADDRESS)/$(MODULE_NAME):$(MODULE_VERSION)
         docker push $(CONTAINER_REGISTRY_ADDRESS)/$(MODULE_NAME):$(MODULE_VERSION)
       displayName: 'Push Docker Image'
