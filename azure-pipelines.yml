@@ -1,12 +1,6 @@
 trigger:
 - main
 
-variables:
-  MODULE_NAME: 'Airquality'               # 你的模块名，确保与代码目录对应
-  MODULE_VERSION: '1.0.0'                 # 镜像版本号
-  CONTAINER_REGISTRY_ADDRESS: 'chickenfarmmardrid.azurecr.io'
-  CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid: $(CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid)
-  CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid: $(CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid)
 
 stages:
 - stage: Build
