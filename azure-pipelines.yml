@@ -11,7 +11,7 @@ stages:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
-        version: '8.0.x'   # 使用最新 .NET 8 SDK
+        version: '8.0.x'   # 指定最新 .NET 8 SDK
       displayName: 'Use .NET 8 SDK'
 
     - script: |
@@ -22,33 +22,22 @@ stages:
         echo "Building module ${MODULE_NAME}"
         cd ./modules/${MODULE_NAME}
         dotnet publish --os linux --arch x64 /t:PublishContainer
-
-        echo "=== Local Docker images after dotnet publish ==="
-        docker images
-
-        # 将模块名转换为小写
-        MODULE_NAME_LOWER=$(echo "${MODULE_NAME}" | tr '[:upper:]' '[:lower:]')
-        echo "Lowercase module name: $MODULE_NAME_LOWER"
-
-        # 假设 dotnet publish 生成的镜像名字就是小写模块名
-        echo "Tagging image..."
-        docker tag ${MODULE_NAME_LOWER} ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME_LOWER}:$(MODULE_VERSION)
-
-        echo "Pushing image to container registry..."
-        docker push ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME_LOWER}:$(MODULE_VERSION)
-      displayName: 'Build and Push Docker Image'
+      displayName: 'Build Docker Image'
       env:
         MODULE_NAME: $(MODULE_NAME)
-        MODULE_VERSION: $(MODULE_VERSION)
-        CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid: $(CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid)
-        CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid: $(CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid)
-        CONTAINER_REGISTRY_ADDRESS: $(CONTAINER_REGISTRY_ADDRESS)
 
     - script: |
         echo "Logging into container registry"
-        echo $(CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid) | docker login $(CONTAINER_REGISTRY_ADDRESS) -u $(CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid) --password-stdin
-      displayName: 'Docker Login'
+        # 把模块名转换为小写
+        MODULE_NAME_LOWER=$(echo "${MODULE_NAME}" | tr '[:upper:]' '[:lower:]')
+        echo "Lowercase module name: $MODULE_NAME_LOWER"
+
+        docker login -u $(CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid) -p $(CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid) $(CONTAINER_REGISTRY_ADDRESS)
+        docker tag ${MODULE_NAME} ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME_LOWER}:$(MODULE_VERSION)
+        docker push ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME_LOWER}:$(MODULE_VERSION)
+      displayName: 'Push Docker Image'
       env:
+        MODULE_NAME: $(MODULE_NAME)
         CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid: $(CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid)
         CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid: $(CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid)
         CONTAINER_REGISTRY_ADDRESS: $(CONTAINER_REGISTRY_ADDRESS)
@@ -88,4 +77,4 @@ stages:
         deploymentid: '$(System.TeamProject)-devops-deployment'
         priority: 0
         deviceOption: 'Single Device'
-        deviceId: 'airquality'  # 注意这里也要小写，保持和镜像名一致
+        deviceId: 'Airquality'
