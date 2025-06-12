@@ -1,7 +1,6 @@
 trigger:
 - main
 
-
 stages:
 - stage: Build
   jobs:
@@ -12,10 +11,14 @@ stages:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
-        version: '7.x'  # 或你需要的 .NET SDK 版本
+        version: '7.x'  
       displayName: 'Use .NET SDK'
 
     - script: |
+        echo "Current directory: $(System.DefaultWorkingDirectory)"
+        ls -l
+        ls -l modules
+
         echo "Building module ${MODULE_NAME}"
         cd ./modules/${MODULE_NAME}
         dotnet publish --os linux --arch x64 /t:PublishContainer
@@ -43,7 +46,6 @@ stages:
       vmImage: ubuntu-22.04
     steps:
     - script: |
-        # 安装 Python 3.9 和 pip
         sudo apt-get update
         sudo apt-get install -y software-properties-common
         sudo add-apt-repository -y ppa:deadsnakes/ppa
@@ -51,8 +53,6 @@ stages:
         sudo apt-get install -y python3.9 python3.9-distutils curl
         curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
         sudo python3.9 get-pip.py
-
-        # 安装 iotedgedev 和依赖包
         python3.9 -m pip install -U iotedgedev pyOpenSSL==22.0.0 urllib3==1.22 requests
       displayName: 'Install Python 3.9 and iotedgedev'
 
@@ -73,5 +73,4 @@ stages:
         deploymentid: '$(System.TeamProject)-devops-deployment'
         priority: 0
         deviceOption: 'Single Device'
-        deviceId: 'Airquality'                         
-
+        deviceId: 'Airquality'  
