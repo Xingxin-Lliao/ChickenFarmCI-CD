@@ -11,7 +11,7 @@ stages:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
-        version: '7.x'  
+        version: '8.X'  
       displayName: 'Use .NET SDK'
 
     - script: |
