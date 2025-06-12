@@ -28,9 +28,13 @@ stages:
 
     - script: |
         echo "Logging into container registry"
+        # 把模块名转换为小写
+        MODULE_NAME_LOWER=$(echo "${MODULE_NAME}" | tr '[:upper:]' '[:lower:]')
+        echo "Lowercase module name: $MODULE_NAME_LOWER"
+
         docker login -u $(CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid) -p $(CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid) $(CONTAINER_REGISTRY_ADDRESS)
-        docker tag ${MODULE_NAME} ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME}:$(MODULE_VERSION)
-        docker push ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME}:$(MODULE_VERSION)
+        docker tag ${MODULE_NAME} ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME_LOWER}:$(MODULE_VERSION)
+        docker push ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME_LOWER}:$(MODULE_VERSION)
       displayName: 'Push Docker Image'
       env:
         MODULE_NAME: $(MODULE_NAME)
