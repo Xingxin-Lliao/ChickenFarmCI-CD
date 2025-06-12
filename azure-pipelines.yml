@@ -11,8 +11,8 @@ stages:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
-        version: '8.X'  
-      displayName: 'Use .NET SDK'
+        version: '8.0.x'   # 指定最新 .NET 8 SDK
+      displayName: 'Use .NET 8 SDK'
 
     - script: |
         echo "Current directory: $(System.DefaultWorkingDirectory)"
@@ -73,4 +73,4 @@ stages:
         deploymentid: '$(System.TeamProject)-devops-deployment'
         priority: 0
         deviceOption: 'Single Device'
-        deviceId: 'Airquality'  
+        deviceId: 'Airquality'
