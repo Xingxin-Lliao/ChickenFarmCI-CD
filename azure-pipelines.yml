@@ -19,25 +19,32 @@ stages:
         ls -l
         ls -l modules
 
-        echo "Building module ${MODULE_NAME}"
+        MODULE_NAME_LOWER=$(echo "${MODULE_NAME}" | tr '[:upper:]' '[:lower:]')
+        echo "Building module ${MODULE_NAME} as ${MODULE_NAME_LOWER}"
+
         cd ./modules/${MODULE_NAME}
-        dotnet publish --os linux --arch x64 /t:PublishContainer
+        dotnet publish --os linux --arch x64 /t:PublishContainer -p:ContainerImageName=${MODULE_NAME_LOWER} -p:ContainerImageTag=${MODULE_VERSION}
       displayName: 'Build Docker Image'
       env:
         MODULE_NAME: $(MODULE_NAME)
+        MODULE_VERSION: $(MODULE_VERSION)
 
     - script: |
         echo "Logging into container registry"
-        # 把模块名转换为小写
         MODULE_NAME_LOWER=$(echo "${MODULE_NAME}" | tr '[:upper:]' '[:lower:]')
         echo "Lowercase module name: $MODULE_NAME_LOWER"
 
         docker login -u $(CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid) -p $(CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid) $(CONTAINER_REGISTRY_ADDRESS)
-        docker tag ${MODULE_NAME} ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME_LOWER}:$(MODULE_VERSION)
+
+        echo "Tagging image"
+        docker tag ${MODULE_NAME_LOWER}:$(MODULE_VERSION) ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME_LOWER}:$(MODULE_VERSION)
+
+        echo "Pushing image"
         docker push ${CONTAINER_REGISTRY_ADDRESS}/${MODULE_NAME_LOWER}:$(MODULE_VERSION)
       displayName: 'Push Docker Image'
       env:
         MODULE_NAME: $(MODULE_NAME)
+        MODULE_VERSION: $(MODULE_VERSION)
         CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid: $(CONTAINER_REGISTRY_USERNAME_chickenfarmmardrid)
         CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid: $(CONTAINER_REGISTRY_PASSWORD_chickenfarmmardrid)
         CONTAINER_REGISTRY_ADDRESS: $(CONTAINER_REGISTRY_ADDRESS)
